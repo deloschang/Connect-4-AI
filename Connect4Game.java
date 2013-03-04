@@ -26,6 +26,7 @@ public class Connect4Game implements Connect4State{
 
 	/**
 	 * Constructs game in initial state
+	 * 
 	 * @param playerNum the player whose move it is
 	 * @param thePlayers the player objects
 	 * @param aView the view in the model-view-controller model

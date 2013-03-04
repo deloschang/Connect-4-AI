@@ -2,14 +2,16 @@ public class ComputerConnect4Player extends Player {
 	private int depth;  // depth to search at
 	
 	private static final int[] HOW_GOOD = {0, 2, 10^2, 10^3, 10^6}; // index is # of unblocked four-in-row potentials
+	private static final int NEG_BOUND = -99999999;
+	private static final int POS_BOUND = 99999999;
 
 	/**
 	 * Create a computer player with a given name
 	 * @param name name of computer player
 	 */
-	public ComputerConnect4Player(String name, int maxDepth){
+	public ComputerConnect4Player(String name, int depth){
 		super(name);
-		this.depth = maxDepth;
+		this.depth = depth;
 	}
 	
 	@Override
@@ -17,10 +19,28 @@ public class ComputerConnect4Player extends Player {
 		// First copy the game instance
 		Connect4Game stateCopy = new Connect4Game(state.getPlayerNum(), state.getPlayers(), state.getBoard(), findUnblocked(state), movesDone(state));
 		
-		view.reportMove(1, state.getPlayerToMove().getName());
+		Connect4Move chosenMoveObj = pickMove(stateCopy, depth, NEG_BOUND, POS_BOUND);
+		int chosenMove = chosenMoveObj.move;
 		
-		return 1;
+		view.reportMove(chosenMove, state.getPlayerToMove().getName());
+		
+		return chosenMove;
 	} 
+	
+	/**
+	 * Uses game tree search with alpha-beta pruning to pick player's move 
+	 * low and high define the current range for the best move
+	 * 
+	 * @param state the current state of the game
+	 * @param depth the number of moves to look ahead in game tree search
+	 * @param low a value that the player can achieve by some other move
+	 * @param high a value that the opponent can force by a different line of play
+	 * @return the move chosen
+	 */
+	private static Connect4Move pickMove(Connect4Game state, int depth, int low, int high){
+		
+	}
+	
 	
 	/**
 	 * Helper method that counts the moves made
