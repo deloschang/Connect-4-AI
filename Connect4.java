@@ -24,7 +24,7 @@ public class Connect4 {
 		if (playerName.contains("Computer")){
 			players[0] = new ComputerConnect4Player(playerName);
 		} else { 
-			players[0] = new HumanConnect4Player(playerName);
+			players[0] = new Connect4HumanPlayer(playerName);
 		}
 		
 		playerName = view.getAnswer("Enter the name of the second player." +
@@ -33,10 +33,10 @@ public class Connect4 {
 		if (playerName.contains("Computer")){
 			players[1] = new ComputerConnect4Player(playerName);
 		} else { 
-			players[1] = new HumanConnect4Player(playerName);
+			players[1] = new Connect4HumanPlayer(playerName);
 		}
 		
-		Connect4Game state = new Connect4Game(0, players, view); 
+		Connect4Game state = new Connect4Game(0, players); 
 		
 		view.display(state);
 		
