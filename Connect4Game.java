@@ -14,6 +14,12 @@ public class Connect4Game implements Connect4State{
 	private char[][] board;
 	private Player [] players;
 	private int playerToMoveNum; // 0 or 1 for which player to go
+	
+	private int latestRow = -1; // latest row added to by makeMove method
+								// initialize to -1
+	private int latestCol = -1; // latest column added to by makeMove method
+								// initialize to -1
+	private int movesDone; // number of moves made
 
 
 	/**
@@ -88,6 +94,13 @@ public class Connect4Game implements Connect4State{
 			
 			// Switch player
 			playerToMoveNum = 1 - playerToMoveNum;
+			
+			// Increment moves done
+			movesDone++;
+			
+			// Update latest row/cols
+			latestRow = openRow;
+			latestCol = col;
 		} else { 
 			System.out.println("Not a valid move. Choose another");
 		}
@@ -133,23 +146,93 @@ public class Connect4Game implements Connect4State{
 	 */
 	@Override
 	public boolean isFull() {
-		// Game is over when top row of all slots are filled
-		for(int i = 0; i < COLS; i++){
-			if (!isColumnFull(i)){
-				return false;
-			}
+		if (movesDone == ROWS * COLS){ 
+			return true;
+		} else { 
+			return false;
 		}
-		
-		return true;
 	}
 
+	
+	
+	private boolean checkForFour(int row, int column,
+			int rowOffset, int colOffset){
+		
+		int winCounter = 0; // counts to 4 for win
+		
+		// Find opp ends for the possible Connect 4
+		int oppRow = 3 * rowOffset + row; 
+		int oppColumn = 3 * colOffset + column;
+		
+		// conditions where Connect 4 is impossible
+			// less than 7 moves (counting both players)
+			// adjusted offset for row/col is < 0 or > maximum
+		if ( (movesDone < 7 ) || (oppRow >= ROWS) || (oppColumn >= COLS) ||
+				(oppRow < 0) || (oppColumn < 0) ||
+				(row < 0) || (column < 0) || 
+				(row >= ROWS) || (column >= COLS)){
+			return false;
+		}
+		
+		for (int i = 1; i < 5; i++){
+			System.out.println("latestRow is "+row);
+			System.out.println("latestCol is "+column);
+			
+			System.out.println("Piece here is: "+board[row][column]);
+			System.out.println("Checking for winning "+CHECKERS[1 - playerToMoveNum]);
+			if (board[row][column] == CHECKERS[1 - playerToMoveNum]){
+				
+				winCounter++;
+			}
+			
+			System.out.println("wincounter = "+winCounter);
+			
+			// Adjust offsets and look for the next piece 
+			// that would lead to a four-in-row.
+			row += rowOffset;
+			column += colOffset;
+		}
+		
+		if (winCounter == 4){
+			return true;
+		} else {
+			return false;
+		}
+		
+	}
+	
 	/**
 	 * Decides if game is over
 	 * @return true iff the game is over
 	 */
 	@Override
 	public boolean gameIsOver() {
-		return isFull();
+		// Check if game is complete
+		if ( isFull() ){
+			return true;
+		}
+		
+		// Check vertical four-in-row
+		System.out.println("Checking vertical conditions...\n");
+		if ( checkForFour(latestRow, latestCol, -1, 0)){
+			return true;
+		} 
+		
+		for (int offset = 0; offset < 4; offset++){
+			// Check horizontal four-in-row
+			System.out.println("Checking horizontal conditions...\n");
+			if ( checkForFour(latestRow, latestCol - offset, 0, 1)) return true;
+			
+			System.out.println("Checking diag lower right conditions...\n");
+			// Check diagonal via lower right
+			if ( checkForFour(latestRow - offset, latestCol + offset, 1, -1)) return true;
+			
+			System.out.println("Checking diag upper right conditions...\n");
+			// Check diagonal via upper right
+			if ( checkForFour(latestRow - offset, latestCol - offset, 1, 1)) return true;
+		}
+		
+		return false;
 	}
 
 }
