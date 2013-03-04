@@ -69,6 +69,10 @@ public class Connect4Game implements Connect4State{
 		return false;
 	}
 
+	/**
+	 * Make a move, dropping a checker in the given column
+	 * @param col the column to get the new checker
+	 */
 	@Override
 	public void makeMove(int col) {
 		// TODO Auto-generated method stub
@@ -81,10 +85,21 @@ public class Connect4Game implements Connect4State{
 		return false;
 	}
 
+	/**
+	 * Decides if game is over
+	 * @return true iff the game is over
+	 */
 	@Override
 	public boolean gameIsOver() {
-		// TODO Auto-generated method stub
-		return false;
+		
+		// Game is over when top row of all slots are filled
+		for(int i = 0; i < ROWS; i++){
+			if (board[i][COLS - 1] == EMPTY){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

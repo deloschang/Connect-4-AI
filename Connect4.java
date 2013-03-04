@@ -41,7 +41,14 @@ public class Connect4 {
 		view.display(state);
 		
 		// Hold current game state
+		while (!state.gameIsOver()){
+			int move = state.getPlayerToMove().getMove(state, view);
+			
+			state.makeMove(move);
+			view.display(state);
+		}
 		
+		// The game is over
 		
 		
 		
