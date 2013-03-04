@@ -77,15 +77,17 @@ public class Connect4Game implements Connect4State{
 	public void makeMove(int col) {
 		// first check if the move is valid
 		if (isValidMove(col)){
-			System.out.println("hello");
 			int openRow = findOpenRow(col);
 			
-			System.out.println(openRow);
+			System.out.println(openRow + " is the first open row");
 			
 			// add the checker
 			board[openRow][col] = CHECKERS[getPlayerNum()];
 			
 			System.out.println(board[openRow][col]);
+			
+			// Switch player
+			playerToMoveNum = 1 - playerToMoveNum;
 		} else { 
 			System.out.println("Not a valid move. Choose another");
 		}
@@ -99,9 +101,10 @@ public class Connect4Game implements Connect4State{
 	 */
 	private int findOpenRow(int col){
 		// find the first row that isn't filled
-		for (int i = 0; i < ROWS - 1; i++){
+		for (int i = 0; i < ROWS; i++){
+			System.out.println("Checking " + i + " for open row");
 			if (board[i][col] == EMPTY){
-				return col;
+				return i;
 			}
 		}
 		
@@ -117,7 +120,7 @@ public class Connect4Game implements Connect4State{
 	private boolean isColumnFull(int col) {
 		System.out.println("Checking "+col);
 		if (board[ROWS - 1][col] == EMPTY){
-			System.out.println(ROWS - 1 + "," + col + "is empty");
+			System.out.println(ROWS - 1 + "," + col + " is empty");
 			return false;
 		} else { 
 			return true;
