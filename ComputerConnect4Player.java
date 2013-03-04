@@ -16,7 +16,6 @@ public class ComputerConnect4Player extends Player {
 	public int getMove(Connect4State state, Connect4View view) {
 		// First copy the game instance
 		Connect4Game stateCopy = new Connect4Game(state.getPlayerNum(), state.getPlayers(), state.getBoard(), findUnblocked(state), movesDone(state));
-//		Connect4Game gameCopy = new Connect4Game(state.getPlayerNum(), state.getPlayers(), state.getBoard(), movesDone(state));
 		
 		view.reportMove(1, state.getPlayerToMove().getName());
 		
@@ -25,8 +24,8 @@ public class ComputerConnect4Player extends Player {
 	
 	/**
 	 * Helper method that counts the moves made
-	 * @param state
-	 * @return
+	 * @param state the input state of the board
+	 * @return the number of moves already made
 	 */
 	private static int movesDone(Connect4State state){
 		int counter = 0;

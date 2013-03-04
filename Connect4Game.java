@@ -1,6 +1,5 @@
 import java.util.Arrays;
 
-
 /**
  * Connect4Game.java
  * 
@@ -19,7 +18,10 @@ public class Connect4Game implements Connect4State{
 								// initialize to -1
 	private int latestCol = -1; // latest column added to by makeMove method
 								// initialize to -1
+	
 	private int movesDone; // number of moves made
+	
+	private int unblockedValue; // int evaluation of unblocked four-in-row for both players
 
 
 	/**
@@ -38,16 +40,21 @@ public class Connect4Game implements Connect4State{
 		
 		playerToMoveNum = playerNum;
 		players = thePlayers;
+		
+		movesDone = 0;
+		unblockedValue = 0;
 	}
 	
 	/**
 	 * Construct the game with input states
+	 * 
 	 * @param playerNum the player whose move it is
 	 * @param thePlayers the player objects
 	 * @param initialBoard the board input with requisite pieces
 	 * @param movesMade the number of moves already made
+	 * @param unblockedTotal a total int evaluation of unblocked four-in-row for opp and computer
 	 */
-	public Connect4Game(int playerNum, Player[] thePlayers, char[][] initialBoard, int movesMade){
+	public Connect4Game(int playerNum, Player[] thePlayers, char[][] initialBoard, int movesMade, int unblockedTotal){
 		// Initialize board with rows and columns
 		board = new char[ROWS][COLS];
 		
@@ -59,7 +66,10 @@ public class Connect4Game implements Connect4State{
 		
 		playerToMoveNum = playerNum;
 		players = thePlayers;
+		
 		movesDone = movesMade;
+		unblockedValue = unblockedTotal;
+	
 		
 		
 	}
