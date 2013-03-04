@@ -6,10 +6,9 @@
  *
  */
 
-
 public class Connect4 {
 	public static void main(String [] args){
-		int depth;                        // Number of moves to look ahead
+		int COMP_DEPTH = 5; // set the depth
 
 		// Hold the view methods. 
 		Connect4View view = new Connect4ViewGraphical();
@@ -17,12 +16,16 @@ public class Connect4 {
 		Player [] players = new Player[2];
 
 		// Initialize the game
+			// Computer - for computer
+			// Professor - for Prof. Drysdale's AI
 		
 		String playerName = view.getAnswer("Enter the name of the first player." +
 		"\n(Include 'Computer' if you want a computer player) ");
 		
 		if (playerName.contains("Computer")){
-			players[0] = new ComputerConnect4Player(playerName);
+			players[0] = new ComputerConnect4Player(playerName, COMP_DEPTH);
+		} else if (playerName.contains("Professor")){ 
+			players[0] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
 			players[0] = new Connect4HumanPlayer(playerName);
 		}
@@ -31,7 +34,9 @@ public class Connect4 {
 		"\n(Include 'Computer' if you want a computer player) ");
 		
 		if (playerName.contains("Computer")){
-			players[1] = new ComputerConnect4Player(playerName);
+			players[1] = new ComputerConnect4Player(playerName, COMP_DEPTH);
+		} else if (playerName.contains("Professor")){ 
+			players[1] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
 			players[1] = new Connect4HumanPlayer(playerName);
 		}

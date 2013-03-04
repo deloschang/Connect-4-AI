@@ -39,6 +39,30 @@ public class Connect4Game implements Connect4State{
 		playerToMoveNum = playerNum;
 		players = thePlayers;
 	}
+	
+	/**
+	 * Construct the game with input states
+	 * @param playerNum the player whose move it is
+	 * @param thePlayers the player objects
+	 * @param initialBoard the board input with requisite pieces
+	 * @param movesMade the number of moves already made
+	 */
+	public Connect4Game(int playerNum, Player[] thePlayers, char[][] initialBoard, int movesMade){
+		// Initialize board with rows and columns
+		board = new char[ROWS][COLS];
+		
+		for (int row = 0; row < ROWS; row++){
+			for (int column = 0; column < COLS; column++){
+				board[row][column] = initialBoard[row][column];
+			}
+		}
+		
+		playerToMoveNum = playerNum;
+		players = thePlayers;
+		movesDone = movesMade;
+		
+		
+	}
 
 
 	@Override
@@ -64,6 +88,10 @@ public class Connect4Game implements Connect4State{
 		return playerToMoveNum;
 	}
 
+	public int getMovesPlayed(){
+		return movesDone;
+	}
+	
 	@Override
 	public Player getPlayerToMove() {
 		return players[playerToMoveNum];
@@ -102,7 +130,7 @@ public class Connect4Game implements Connect4State{
 			latestRow = openRow;
 			latestCol = col;
 		} else { 
-			System.out.println("Not a valid move. Choose another");
+			throw new IllegalStateException("Column is full!");
 		}
 	}
 
@@ -146,15 +174,18 @@ public class Connect4Game implements Connect4State{
 	 */
 	@Override
 	public boolean isFull() {
-		if (movesDone == ROWS * COLS){ 
-			return true;
-		} else { 
-			return false;
-		}
+		return (movesDone == ROWS * COLS);
 	}
-
 	
 	
+	/**
+	 * Checks for four-in-row
+	 * @param row latest row that a move was made on
+	 * @param column latest column that a move was made on
+	 * @param rowOffset a row offset to calculate different connect 4 possibilities
+	 * @param colOffset a row offset to calculate different connect 4 possibilities
+	 * @return true iff there is a connect 4
+	 */
 	private boolean checkForFour(int row, int column,
 			int rowOffset, int colOffset){
 		
@@ -193,12 +224,7 @@ public class Connect4Game implements Connect4State{
 			column += colOffset;
 		}
 		
-		if (winCounter == 4){
-			return true;
-		} else {
-			return false;
-		}
-		
+		return (winCounter == 4);
 	}
 	
 	/**
