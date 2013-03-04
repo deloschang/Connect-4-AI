@@ -42,6 +42,7 @@ public class Connect4 {
 		
 		// Hold current game state
 		while (!state.gameIsOver()){
+			System.out.println("Make a Move");
 			int move = state.getPlayerToMove().getMove(state, view);
 			
 			state.makeMove(move);

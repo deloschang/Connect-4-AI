@@ -65,8 +65,8 @@ public class Connect4Game implements Connect4State{
 
 	@Override
 	public boolean isValidMove(int col) {
-		// TODO Auto-generated method stub
-		return false;
+		// move is valid if the top column isn't full
+		return !isColumnFull(col);
 	}
 
 	/**
@@ -75,14 +75,69 @@ public class Connect4Game implements Connect4State{
 	 */
 	@Override
 	public void makeMove(int col) {
-		// TODO Auto-generated method stub
-
+		// first check if the move is valid
+		if (isValidMove(col)){
+			System.out.println("hello");
+			int openRow = findOpenRow(col);
+			
+			System.out.println(openRow);
+			
+			// add the checker
+			board[openRow][col] = CHECKERS[getPlayerNum()];
+			
+			System.out.println(board[openRow][col]);
+		} else { 
+			System.out.println("Not a valid move. Choose another");
+		}
 	}
 
+	/** 
+	 * Find the first empty row in a column
+	 * -1 if the column is full (no empty row)
+	 * 
+	 * @param col the column to check
+	 */
+	private int findOpenRow(int col){
+		// find the first row that isn't filled
+		for (int i = 0; i < ROWS - 1; i++){
+			if (board[i][col] == EMPTY){
+				return col;
+			}
+		}
+		
+		return -1;
+	}
+	
+	/**
+	 * Is column full?
+	 * 
+	 * @param col the column to check
+	 * @return true if the column is full
+	 */
+	private boolean isColumnFull(int col) {
+		System.out.println("Checking "+col);
+		if (board[ROWS - 1][col] == EMPTY){
+			System.out.println(ROWS - 1 + "," + col + "is empty");
+			return false;
+		} else { 
+			return true;
+		}
+	}
+	
+	/**
+	 * Is the board full?
+	 * @return true if the board is full
+	 */
 	@Override
 	public boolean isFull() {
-		// TODO Auto-generated method stub
-		return false;
+		// Game is over when top row of all slots are filled
+		for(int i = 0; i < COLS; i++){
+			if (!isColumnFull(i)){
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 	/**
@@ -91,15 +146,7 @@ public class Connect4Game implements Connect4State{
 	 */
 	@Override
 	public boolean gameIsOver() {
-		
-		// Game is over when top row of all slots are filled
-		for(int i = 0; i < ROWS; i++){
-			if (board[i][COLS - 1] == EMPTY){
-				return false;
-			}
-		}
-		
-		return true;
+		return isFull();
 	}
 
 }
