@@ -18,6 +18,32 @@ public class Connect4 {
 
 		// Initialize the game
 		
-		String playerName = 
+		String playerName = view.getAnswer("Enter the name of the first player." +
+		"\n(Include 'Computer' if you want a computer player) ");
+		
+		if (playerName.contains("Computer")){
+			players[0] = new ComputerConnect4Player(playerName);
+		} else { 
+			players[0] = new HumanConnect4Player(playerName);
+		}
+		
+		playerName = view.getAnswer("Enter the name of the second player." +
+		"\n(Include 'Computer' if you want a computer player) ");
+		
+		if (playerName.contains("Computer")){
+			players[1] = new ComputerConnect4Player(playerName);
+		} else { 
+			players[1] = new HumanConnect4Player(playerName);
+		}
+		
+		Connect4Game state = new Connect4Game(0, players, view); 
+		
+		view.display(state);
+		
+		// Hold current game state
+		
+		
+		
+		
 	}
 }

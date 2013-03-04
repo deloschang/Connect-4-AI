@@ -1,5 +1,3 @@
-
-
 /**
  * An interface for the game state of the Connect 4 game.
  * 
