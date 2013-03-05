@@ -140,6 +140,7 @@ public class Connect4Game implements Connect4State{
 			// Switch evaluation for player and computer 
 			evalValue = -1 * evalValue;
 			
+			// Evaluation steps
 			evalValue = evalValue - evalAdjust(openRow, col); // adjust the evaluation for the move
 			board[openRow][col] = CHECKERS[getPlayerNum()]; // add the checker
 			evalValue = evalValue + evalAdjust(openRow, col); // reevaluate with new piece in place
@@ -151,6 +152,7 @@ public class Connect4Game implements Connect4State{
 			latestRow = openRow;
 			latestCol = col;
 		} else { 
+			// because it was not a valid move
 			throw new IllegalStateException("Column is full!");
 		}
 	}
@@ -227,7 +229,6 @@ public class Connect4Game implements Connect4State{
 		int diagValueOne = evalPossibilities(mainPlayer, opponent, offsetLeftColumn, offsetRightColumn, 
 				offsetOpenRow, diagonalDelta);
 
-
 		// change offset values for next diagonal
 		leftOffset = Math.min(Math.min(5 - openRow, column), 3);
 		rightOffset = Math.min(Math.min(openRow, 6 - column), 3);
@@ -237,7 +238,7 @@ public class Connect4Game implements Connect4State{
 		offsetLeftColumn = column - leftOffset;
 		diagonalDelta = -1;
 
-		// evaluate diagonal 2
+		// evaluate diagonal 2 (opp direction)
 		int diagValueTwo = evalPossibilities(mainPlayer, opponent, offsetLeftColumn, 
 				offsetRightColumn, offsetOpenRow, diagonalDelta);
 
@@ -281,16 +282,45 @@ public class Connect4Game implements Connect4State{
 		}
 
 		// if there isn't the other player's piece in the way, weight by position strength
-		if (playerCount == 0) {
-			verticalValue = verticalValue - ComputerConnect4Player.HOW_GOOD[opponentCount];
-		} else if (opponentCount == 0) {
-			verticalValue = verticalValue + ComputerConnect4Player.HOW_GOOD[playerCount];
-		}
-
+		verticalValue = applyWeights(playerCount, opponentCount, verticalValue);
+		
 		// return this sum for the analysis of the verticals
 		return verticalValue;
 	}
 
+	
+	
+	/**
+	 * Public helper method to apply weights after looking at Connect 4
+	 * possibilities
+	 * 
+	 * @param playerCount the number of pieces player has in the connect 4 line
+	 * @param opponentCount the number of pieces opponent has in the connect 4 line
+	 * @param sum the weighted sum so far
+	 * @return the new sum after applying the weights.
+	 */
+	public static int applyWeights(int playerCount, int opponentCount, int sum){
+		// apply the weights based on the previous connect 4 possibilities
+		if (playerCount == 0){
+			sum = sum - ComputerConnect4Player.HOW_GOOD[opponentCount];
+		} else if (opponentCount == 0) {
+			sum = sum + ComputerConnect4Player.HOW_GOOD[playerCount];
+		}
+		
+		return sum;
+	}
+	
+	/**
+	 * Evaluates the possibilities for diagonal and horizontal connect fours
+	 * 
+	 * @param mainPlayer the main player
+	 * @param opponent the other player
+	 * @param leftBound the leftside bound of the connect 4
+	 * @param rightBound the rightside bound of the connect 4
+	 * @param currentRow the open row that the move piece would go into
+	 * @param offsetRow the offset for diagonals (1 or -1), 0 for horizontals
+	 * @return
+	 */
 	private int evalPossibilities(char mainPlayer, char opponent, int leftBound, 
 			int rightBound, int currentRow, int offsetRow){
 
@@ -302,52 +332,60 @@ public class Connect4Game implements Connect4State{
 		int checkColumn = leftBound;
 		int checkRow = currentRow; 
 		
+		// -4 or 4 depending on which type of diagonal
+		// 0 if checking horizontal
+		int diagonalDelta = offsetRow * 4;
+		
 		if (boundDiff < 3) {
 			return 0;
 		}
 
-		for (; checkColumn <= leftBound + 3; checkRow += offsetRow) {
+		// ++ for row and column for diagonals
+		// ++ for column for horizontals
+		for (checkColumn = checkColumn; 
+				checkColumn <= leftBound + 3;
+				checkRow += offsetRow) {
 
+			// check whose pieces belong to whom
 			if (board[checkRow][checkColumn] == opponent){
-				opponentCount++;
+				opponentCount = opponentCount + 1;
 			} else if (board[checkRow][checkColumn] == mainPlayer){
-				playerCount++;
+				playerCount = playerCount + 1;
 			}
-			checkColumn++;
+			checkColumn = checkColumn + 1;
+			
 		}
 
-		// apply the weights
-		if (playerCount == 0){
-			sum = sum - ComputerConnect4Player.HOW_GOOD[opponentCount];
-		} else if (opponentCount == 0) {
-			sum = sum + ComputerConnect4Player.HOW_GOOD[playerCount];
-		}
-
-		// -4 or 4 depending on which type of diagonal
-		// 0 if checking horizontal
-		int diagonalDelta = offsetRow * 4;
-
-		for (; checkColumn <= rightBound; checkRow += offsetRow){
+		// apply the weights based on the previous connect 4 possibilities
+		sum = applyWeights(playerCount, opponentCount, sum);
+		
+		// ++ for row and column for diagonals
+		// ++ for column for horizontals
+		for (checkColumn = checkColumn;
+				checkColumn <= rightBound;
+				checkRow += offsetRow){
 			if (board[(checkRow - diagonalDelta)][(checkColumn - 4)] == opponent){
 				opponentCount = opponentCount -1;
-			} else if (board[(checkRow - diagonalDelta)][(checkColumn - 4)] == mainPlayer) {
+			} 
+			
+			if (board[(checkRow - diagonalDelta)][(checkColumn - 4)] == mainPlayer) {
 				playerCount = playerCount -1;
 			}
 
 			if (board[checkRow][checkColumn] == opponent){
 				opponentCount = opponentCount + 1;
-			} else if (board[checkRow][checkColumn] == mainPlayer) {
+			}
+			
+			if (board[checkRow][checkColumn] == mainPlayer) {
 				playerCount = playerCount + 1;
 			}
 
 			// apply the weights 
-			if (playerCount == 0){
-				sum = sum - ComputerConnect4Player.HOW_GOOD[opponentCount];
-			} else if (opponentCount == 0){
-				sum = sum + ComputerConnect4Player.HOW_GOOD[playerCount];
-			}
+			sum = applyWeights(playerCount, opponentCount, sum);
+			
 			checkColumn = checkColumn + 1;
 		}
+
 
 		//	    System.out.println("total value is " + sum + "\n");
 		return sum;

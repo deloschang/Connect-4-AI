@@ -45,10 +45,12 @@ public class Connect4Text implements Connect4View{
 	 * @return the number of the move that player chose
 	 */
 	public int getUserMove(Connect4State state){
+		int column;
+		
 		System.out.println();
 		System.out.println("Please pick a column");
 		
-		int column = input.nextInt();
+		column = input.nextInt();
 		
 		// check boundaries
 		while ((column < 0) || (column > state.COLS - 1) || !state.isValidMove(column)){
@@ -112,9 +114,7 @@ public class Connect4Text implements Connect4View{
 	public String getAnswer(String question){
 		System.out.println(question + " ");
 		
-		String answerFromUser = input.nextLine();
-		
-		return answerFromUser;
+		return input.nextLine();
 		
 	}
 	

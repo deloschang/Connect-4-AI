@@ -77,17 +77,18 @@ public class ComputerConnect4Player extends Player {
 
 
 				if (state.gameIsOver()){
-//					System.out.println("Game should be OVER!!!!!!");
-
 					// Is game over because board is full?
 					if (state.isFull()){
 						currentMove = new Connect4Move(0, column); // assign value of 0
-					} else {
-						// if it's comp's turn, then this must be a win scenario
-						currentMove = new Connect4Move(HOW_GOOD[4], column);
-					}
+					} 
 					
-				} else if (depth > 0){
+					// if it's comp's turn, then this must be a win scenario
+					currentMove = new Connect4Move(HOW_GOOD[4], column);
+					
+				} 
+				// keep going if depth available
+				else if (depth >= 1){
+					
 					// Switch player perspective
 					// Reduce depth by 1
 					currentMove = pickMove(state, depth - 1, -high, -low, view);
@@ -95,6 +96,7 @@ public class ComputerConnect4Player extends Player {
 					// transfer values back while changing perspective
 					currentMove.value = (currentMove.value * -1);
 					currentMove.move = column;
+					
 				} else { 
 					currentMove = new Connect4Move(state.grabEvalValue(), column);
 				}
@@ -142,7 +144,7 @@ public class ComputerConnect4Player extends Player {
 
 				// undo the state before checking again
 				state.undoMove(theMove, stateEval);
-			}
+			} 
 		}
 
 		// sort the move lists by values
@@ -164,10 +166,13 @@ public class ComputerConnect4Player extends Player {
 
 	/**
 	 * Helper method that counts the moves made
+	 * 
 	 * @param state the input state of the board
 	 * @return the number of moves already made
 	 */
 	private static int movesDone(Connect4State state){
+		// count the pieces
+		
 		int counter = 0;
 		for (int row = 0; row < Connect4Game.ROWS; row++){
 			for (int column = 0; column < Connect4Game.COLS; column++){
@@ -186,32 +191,31 @@ public class ComputerConnect4Player extends Player {
 	 */
 	public static int evaluate(Connect4State state){
 		// grab the checker pieces and board
-		char opponentChecker = Connect4State.CHECKERS[1 - state.getPlayerNum()];
-		char computerChecker = Connect4State.CHECKERS[state.getPlayerNum()];
+		char opponent = Connect4State.CHECKERS[1 - state.getPlayerNum()];
+		char player = Connect4State.CHECKERS[state.getPlayerNum()];
 
 		char[][] board = state.getBoard();
 
 		// value that evaluates the unblocked four-in-rows
 		int totalEvaluation = 0;
 		
-		// patterns for winning
+		// Evaluate patterns for winning
 		//  
 		//   . X X . .   => unblocked on both sides so we can connect 4
 		//  by placing another piece to become
 		//  . X X X .
-		
 		for (int checkColumn = 0; checkColumn < 3; checkColumn ++){
 				// if 0 is empty, followed by 2 of my pieces and two more empty, this is a pattern
 				if (board[0][checkColumn] == Connect4State.EMPTY &&
-						board[0][checkColumn + 1] == computerChecker && 
-						board[0][checkColumn + 2] == computerChecker &&
+						board[0][checkColumn + 1] == player && 
+						board[0][checkColumn + 2] == player &&
 						board[0][checkColumn + 3] == Connect4State.EMPTY && 
 						board[0][checkColumn + 4] == Connect4State.EMPTY){
 					totalEvaluation += HOW_GOOD[3];
 				} else if (board[0][checkColumn] == Connect4State.EMPTY &&
 						board[0][checkColumn + 1] == Connect4State.EMPTY &&
-						board[0][checkColumn + 2] == computerChecker &&
-						board[0][checkColumn + 3] == computerChecker &&
+						board[0][checkColumn + 2] == player &&
+						board[0][checkColumn + 3] == player &&
 						board[0][checkColumn + 4] == Connect4State.EMPTY){
 					totalEvaluation += HOW_GOOD[3];
 			}
@@ -226,20 +230,14 @@ public class ComputerConnect4Player extends Player {
 				int oppCount = 0;
 
 				for (int checkRow = row; checkRow < row + 4; checkRow++){
-					if (board[checkRow][column] == computerChecker){
+					if (board[checkRow][column] == player){
 						compCount++;
-					} else if (board[checkRow][column] == opponentChecker){
+					} else if (board[checkRow][column] == opponent){
 						oppCount++;
 					}
 				}
 
-				if (compCount == 0){
-					// bad for comp
-					totalEvaluation += HOW_GOOD[oppCount];
-				} else if (oppCount == 0){
-					// good for comp
-					totalEvaluation -= HOW_GOOD[compCount];
-				}
+				totalEvaluation = Connect4Game.applyWeights(oppCount, compCount, totalEvaluation);
 			}
 		}
 
@@ -253,21 +251,14 @@ public class ComputerConnect4Player extends Player {
 
 				for (int checkColumn = column; checkColumn < column + 4; checkColumn++){
 					// check whose checker it is and increment their counter
-					if (board[row][checkColumn] == computerChecker){
+					if (board[row][checkColumn] == player){
 						compCount++;
-					} else if (board[row][checkColumn] == opponentChecker){
+					} else if (board[row][checkColumn] == opponent){
 						oppCount++;
 					}
 				}
 
-				if (compCount == 0){
-					// bad for comp
-					totalEvaluation += HOW_GOOD[oppCount];
-				} else if (oppCount == 0){
-					// good for comp
-					totalEvaluation -= HOW_GOOD[compCount];
-				}
-
+				totalEvaluation = Connect4Game.applyWeights(oppCount, compCount, totalEvaluation);
 			}
 		}
 
@@ -280,23 +271,17 @@ public class ComputerConnect4Player extends Player {
 
 				int checkRow = row; // need a checkrow parameter for diag
 				for (int checkColumn = column; checkRow < row + 4; checkColumn++){
-					if (board[checkRow][checkColumn] == computerChecker){
+					if (board[checkRow][checkColumn] == player){
 						compCount++;
-					} else if (board[checkRow][checkColumn] == opponentChecker){
+					} else if (board[checkRow][checkColumn] == opponent){
 						oppCount++;
 					}
 
 					checkRow++; // adjust for diagonal
 				}
 
-				if (compCount == 0){
-					// bad for comp
-					totalEvaluation += HOW_GOOD[oppCount];
-				} else if (oppCount == 0){
-					// good for comp
-					totalEvaluation -= HOW_GOOD[compCount];
-				}
 
+				totalEvaluation = Connect4Game.applyWeights(oppCount, compCount, totalEvaluation);
 			}
 		}
 
@@ -309,23 +294,16 @@ public class ComputerConnect4Player extends Player {
 
 				int checkRow = row; // need a checkrow parameter for diag
 				for (int checkColumn = column; checkColumn < column + 4; checkColumn++){
-					if (board[checkRow][checkColumn] == computerChecker){
+					if (board[checkRow][checkColumn] == player){
 						compCount++;
-					} else if (board[checkRow][checkColumn] == opponentChecker){
+					} else if (board[checkRow][checkColumn] == opponent){
 						oppCount++;
 					}
 
 					checkRow--; // adjust for diagonal
 				}
 
-				if (compCount == 0){
-					// bad for comp
-					totalEvaluation += HOW_GOOD[oppCount];
-				} else if (oppCount == 0){
-					// good for comp
-					totalEvaluation -= HOW_GOOD[compCount];
-				}
-
+				totalEvaluation = Connect4Game.applyWeights(oppCount, compCount, totalEvaluation);
 			}
 		}
 

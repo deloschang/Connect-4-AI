@@ -72,6 +72,5 @@ public class Connect4 {
 			// declare the winner!
 		view.reportToUser(state.getPlayers()[1 - state.getPlayerNum()].getName() + " won!");
 		
-		
 	}
 }
