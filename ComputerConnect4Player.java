@@ -43,11 +43,59 @@ public class ComputerConnect4Player extends Player {
 		Connect4Move[] movesArray; // order of moves
 		
 		// dummy move that will be replaced with evaluation
-		Connect4Move bestMove = new Connect4Move(-Integer.MAX_VALUE, 0); 
+		Connect4Move bestMove = new Connect4Move(-Integer.MAX_VALUE, -10); 
 		
-		// grab the moves
+		// grab the available moves, sorted by value
 		movesArray = checkMoves(state);
 		
+		
+		// Use alpha-beta pruning to pick the move
+		for (int i = 0; i < 7 && bestMove.value < high; i++){
+			// grab the move from list
+			int column = movesArray[i].move;
+			
+			if (state.isValidMove(column)){
+				Connect4Move currentMove;
+				int evalValue = state.grabEvalValue();
+				
+				state.makeMove(column);
+				
+				
+				if (state.gameIsOver()){
+					
+					// Is game over because board is full?
+					if (state.isFull()){
+						currentMove = new Connect4Move(0, column); // assign value of 0
+					} else {
+						// if it's comp's turn, then this must be a win scenario
+						currentMove = new Connect4Move(HOW_GOOD[4] + depth, column);
+					}
+				} else if (depth > 0){
+					// Switch player perspective
+					currentMove = pickMove(state, depth - 1, -high, -low);
+					
+					// transfer values back while changing perspective
+					currentMove.value = (currentMove.value * -1);
+					currentMove.move = column;
+				} else { 
+					currentMove = new Connect4Move(state.grabEvalValue(), column);
+				}
+				
+				if (currentMove.value > bestMove.value){
+					bestMove = currentMove; // replace
+					low = Math.max(bestMove.value, low); // update the achievable lower bound value
+				}
+				
+				// undo move before trying next move
+				state.undoMove(column, evalValue);
+			}
+			
+		}
+		
+		// Best Move has not been updated so there must be no valid moves.
+		if (bestMove.move == -10){
+			throw new IllegalStateException("No valid moves available");
+		}
 		
 		return bestMove;
 	}
@@ -82,10 +130,9 @@ public class ComputerConnect4Player extends Player {
 		}
 		
 		// sort the move lists by values
-		for(int i = 1; i < Connect4Game.ROWS; i++){
-			for(int compare = i; (movesArray[compare].value > 
-				movesArray[(compare - 1)].value &&
-				compare >= 1);
+		for(int i = 1; i < Connect4Game.COLS; i++){
+			for(int compare = i; (compare >=1 && movesArray[compare].value > 
+				movesArray[compare - 1].value);
 				compare--){
 				// placeholder to prevent clobbering
 				Connect4Move placeholder = movesArray[compare];
@@ -191,7 +238,7 @@ public class ComputerConnect4Player extends Player {
 				int compCount = 0;
 				int oppCount = 0;
 				
-				int checkRow = 0; // need a checkrow parameter for diag
+				int checkRow = row; // need a checkrow parameter for diag
 				for (int checkColumn = column; checkRow < row + 4; checkColumn++){
 					if (board[checkRow][checkColumn] == computerChecker){
 						compCount++;
@@ -216,7 +263,7 @@ public class ComputerConnect4Player extends Player {
 		// Evaluate unblocked diagonals (down to right)
 			// down to right diagonal start at most from row 3, column 3
 		for (int column = 0; column < 4; column++){
-			for (int row = 3; row < 7; row++){
+			for (int row = 3; row <= 5; row++){
 				int compCount = 0;
 				int oppCount = 0;
 				
