@@ -21,7 +21,7 @@ public class Connect4Game implements Connect4State{
 	
 	private int movesDone; // number of moves made
 	
-	private int unblockedValue; // int evaluation of unblocked four-in-row for both players
+	private int evalValue; // evaluation of unblocked four-in-row for both players
 
 
 	/**
@@ -43,7 +43,7 @@ public class Connect4Game implements Connect4State{
 		players = thePlayers;
 		
 		movesDone = 0;
-		unblockedValue = 0;
+		evalValue = 0;
 	}
 	
 	/**
@@ -69,7 +69,7 @@ public class Connect4Game implements Connect4State{
 		players = thePlayers;
 		
 		movesDone = movesMade;
-		unblockedValue = unblockedTotal;
+		evalValue = unblockedTotal;
 	
 		
 		
@@ -99,8 +99,16 @@ public class Connect4Game implements Connect4State{
 		return playerToMoveNum;
 	}
 
+	/**
+	 * Gets number of moves played
+	 * @return number of moves played so far
+	 */
 	public int getMovesPlayed(){
 		return movesDone;
+	}
+	
+	public int grabEvalValue(){
+		return evalValue;
 	}
 	
 	@Override
@@ -137,6 +145,12 @@ public class Connect4Game implements Connect4State{
 			// Increment moves done
 			movesDone++;
 			
+			// Switch evaluation position 
+			evalValue = -1 * evalValue;
+			
+			// static modifiers??
+			
+			
 			// Update latest row/cols
 			latestRow = openRow;
 			latestCol = col;
@@ -164,6 +178,30 @@ public class Connect4Game implements Connect4State{
 	}
 	
 	/**
+	 * Undo the move to avoid creating a new state each time
+	 * 
+	 * @param col column to undo
+	 * @param stateEval static evaluation at that time
+	 */
+	public void undoMove(int col, int stateEval){
+		int row = ROWS - 1;
+		
+		// locate which row the latest piece occupied
+		while (board[row][col] == EMPTY){
+			row--;
+		}
+		
+		// change back to empty
+		board[row][col] = EMPTY;
+		
+		// change other parameters to original
+		playerToMoveNum = 1 - playerToMoveNum;
+		
+		evalValue = stateEval;
+		movesDone--;
+	}
+	
+	/**
 	 * Is column full?
 	 * 
 	 * @param col the column to check
@@ -171,12 +209,7 @@ public class Connect4Game implements Connect4State{
 	 */
 	private boolean isColumnFull(int col) {
 		System.out.println("Checking "+col);
-		if (board[ROWS - 1][col] == EMPTY){
-			System.out.println(ROWS - 1 + "," + col + " is empty");
-			return false;
-		} else { 
-			return true;
-		}
+		return !(board[ROWS - 1][col] == EMPTY);
 	}
 	
 	/**

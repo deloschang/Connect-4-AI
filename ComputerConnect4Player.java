@@ -2,8 +2,10 @@ public class ComputerConnect4Player extends Player {
 	private int depth;  // depth to search at
 	
 	private static final int[] HOW_GOOD = {0, 2, 10^2, 10^3, 10^6}; // index is # of unblocked four-in-row potentials
-	private static final int NEG_BOUND = -99999999;
-	private static final int POS_BOUND = 99999999;
+	
+	// the closer a piece is to the center, the more 4-in-row permutations available.
+	// e.g., generally center piece is most valuable
+	private static final int[] movesByCol = { 3, 4, 2, 5, 1, 6, 0 }; 
 
 	/**
 	 * Create a computer player with a given name
@@ -17,9 +19,9 @@ public class ComputerConnect4Player extends Player {
 	@Override
 	public int getMove(Connect4State state, Connect4View view) {
 		// First copy the game instance
-		Connect4Game stateCopy = new Connect4Game(state.getPlayerNum(), state.getPlayers(), state.getBoard(), findUnblocked(state), movesDone(state));
+		Connect4Game stateCopy = new Connect4Game(state.getPlayerNum(), state.getPlayers(), state.getBoard(), evaluate(state), movesDone(state));
 		
-		Connect4Move chosenMoveObj = pickMove(stateCopy, depth, NEG_BOUND, POS_BOUND);
+		Connect4Move chosenMoveObj = pickMove(stateCopy, depth, -Integer.MAX_VALUE, Integer.MAX_VALUE);
 		int chosenMove = chosenMoveObj.move;
 		
 		view.reportMove(chosenMove, state.getPlayerToMove().getName());
@@ -38,9 +40,45 @@ public class ComputerConnect4Player extends Player {
 	 * @return the move chosen
 	 */
 	private static Connect4Move pickMove(Connect4Game state, int depth, int low, int high){
+		Connect4Move[] moveArray; // order of moves
 		
+		// dummy move that will be replaced with evaluation
+		Connect4Move bestMove = new Connect4Move(-Integer.MAX_VALUE, 0); 
+		
+		// grab the moves
+		moveArray = checkMoves(state);
+		
+		
+		return bestMove;
 	}
 	
+	
+	private static Connect4Move[] checkMoves(Connect4Game state){
+		int stateEval; // evaluation of current state based on unblocked 4 in rows
+		Connect4Move[] movesArray = new Connect4Move[Connect4Game.COLS];
+		
+		stateEval = state.grabEvalValue();
+		
+		// go through each column in move list
+		for (int i = 0; i < Connect4Game.COLS; i++){
+			int theMove = movesByCol[i];
+			
+			movesArray[i] = new Connect4Move(-Integer.MAX_VALUE, theMove);
+			if (state.isValidMove(theMove)){
+				// try the move
+				state.makeMove(theMove);
+				
+				// now evaluate the new state
+				movesArray[i].value = state.grabEvalValue();
+				
+				// undo the state before checking again
+				state.undoMove(theMove, stateEval);
+			}
+			
+		}
+		
+		
+	}
 	
 	/**
 	 * Helper method that counts the moves made
@@ -59,12 +97,12 @@ public class ComputerConnect4Player extends Player {
 	}
 	
 	/**
-	 * Find unblocked 4 in a rows
+	 * Evaluate position by finding unblocked 4 in a rows
 	 * 
 	 * @param state the input state of the board
 	 * @return a total int evaluation of unblocked four-in-rows for opp and computer
 	 */
-	private static int findUnblocked(Connect4State state){
+	private static int evaluate(Connect4State state){
 		// grab the checker pieces and board
 		char opponentChecker = Connect4State.CHECKERS[1 - state.getPlayerNum()];
 		char computerChecker = Connect4State.CHECKERS[state.getPlayerNum()];
