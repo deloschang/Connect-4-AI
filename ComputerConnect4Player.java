@@ -40,19 +40,24 @@ public class ComputerConnect4Player extends Player {
 	 * @return the move chosen
 	 */
 	private static Connect4Move pickMove(Connect4Game state, int depth, int low, int high){
-		Connect4Move[] moveArray; // order of moves
+		Connect4Move[] movesArray; // order of moves
 		
 		// dummy move that will be replaced with evaluation
 		Connect4Move bestMove = new Connect4Move(-Integer.MAX_VALUE, 0); 
 		
 		// grab the moves
-		moveArray = checkMoves(state);
+		movesArray = checkMoves(state);
 		
 		
 		return bestMove;
 	}
 	
 	
+	/**
+	 * Check the move list for their associated values
+	 * @param state the current state of the game
+	 * @return an array of moves sorted by their values
+	 */
 	private static Connect4Move[] checkMoves(Connect4Game state){
 		int stateEval; // evaluation of current state based on unblocked 4 in rows
 		Connect4Move[] movesArray = new Connect4Move[Connect4Game.COLS];
@@ -74,10 +79,24 @@ public class ComputerConnect4Player extends Player {
 				// undo the state before checking again
 				state.undoMove(theMove, stateEval);
 			}
+		}
+		
+		// sort the move lists by values
+		for(int i = 1; i < Connect4Game.ROWS; i++){
+			for(int compare = i; (movesArray[compare].value > 
+				movesArray[(compare - 1)].value &&
+				compare >= 1);
+				compare--){
+				// placeholder to prevent clobbering
+				Connect4Move placeholder = movesArray[compare];
+				movesArray[compare] = movesArray[compare - 1];
+				movesArray[compare - 1] = placeholder;
+			}
 			
 		}
 		
-		
+		// new set of moves with updated values
+		return movesArray;
 	}
 	
 	/**

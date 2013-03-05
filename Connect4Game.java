@@ -145,7 +145,7 @@ public class Connect4Game implements Connect4State{
 			// Increment moves done
 			movesDone++;
 			
-			// Switch evaluation position 
+			// Switch evaluation for player and computer 
 			evalValue = -1 * evalValue;
 			
 			// static modifiers??
