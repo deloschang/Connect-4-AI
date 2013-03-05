@@ -50,7 +50,7 @@ public class ComputerConnect4Player extends Player {
 
 		// grab the available moves, sorted by value
 		movesArray = checkMoves(state);
-		
+
 		// dummy move that will be replaced with evaluation
 		Connect4Move bestMove = new Connect4Move(-Integer.MAX_VALUE, -10); 
 
@@ -62,18 +62,18 @@ public class ComputerConnect4Player extends Player {
 
 			if (state.isValidMove(column)){
 				Connect4Move currentMove;
-				
+
 				// grab value of current position to restore later
 				int evalValue = state.grabEvalValue();
 
 				state.makeMove(column);
-				
+
 				// testing
-//				view.display(state);
-//				System.out.println("===============");
-//				System.out.println("Eval # :" + state.grabEvalValue());
-//				System.out.println("True Eval # :" + evaluate(state));
-//				System.out.println("===============");
+				//				view.display(state);
+				//				System.out.println("===============");
+				//				System.out.println("Eval # :" + state.grabEvalValue());
+				//				System.out.println("True Eval # :" + evaluate(state));
+				//				System.out.println("===============");
 
 
 				if (state.gameIsOver()){
@@ -81,14 +81,14 @@ public class ComputerConnect4Player extends Player {
 					if (state.isFull()){
 						currentMove = new Connect4Move(0, column); // assign value of 0
 					} 
-					
+
 					// if it's comp's turn, then this must be a win scenario
 					currentMove = new Connect4Move(HOW_GOOD[4], column);
-					
+
 				} 
 				// keep going if depth available
 				else if (depth >= 1){
-					
+
 					// Switch player perspective
 					// Reduce depth by 1
 					currentMove = pickMove(state, depth - 1, -high, -low, view);
@@ -96,7 +96,7 @@ public class ComputerConnect4Player extends Player {
 					// transfer values back while changing perspective
 					currentMove.value = (currentMove.value * -1);
 					currentMove.move = column;
-					
+
 				} else { 
 					currentMove = new Connect4Move(state.grabEvalValue(), column);
 				}
@@ -172,7 +172,7 @@ public class ComputerConnect4Player extends Player {
 	 */
 	private static int movesDone(Connect4State state){
 		// count the pieces
-		
+
 		int counter = 0;
 		for (int row = 0; row < Connect4Game.ROWS; row++){
 			for (int column = 0; column < Connect4Game.COLS; column++){
@@ -198,29 +198,29 @@ public class ComputerConnect4Player extends Player {
 
 		// value that evaluates the unblocked four-in-rows
 		int totalEvaluation = 0;
-		
+
 		// Evaluate patterns for winning
 		//  
 		//   . X X . .   => unblocked on both sides so we can connect 4
 		//  by placing another piece to become
 		//  . X X X .
 		for (int checkColumn = 0; checkColumn < 3; checkColumn ++){
-				// if 0 is empty, followed by 2 of my pieces and two more empty, this is a pattern
-				if (board[0][checkColumn] == Connect4State.EMPTY &&
-						board[0][checkColumn + 1] == player && 
-						board[0][checkColumn + 2] == player &&
-						board[0][checkColumn + 3] == Connect4State.EMPTY && 
-						board[0][checkColumn + 4] == Connect4State.EMPTY){
-					totalEvaluation += HOW_GOOD[3];
-				} else if (board[0][checkColumn] == Connect4State.EMPTY &&
-						board[0][checkColumn + 1] == Connect4State.EMPTY &&
-						board[0][checkColumn + 2] == player &&
-						board[0][checkColumn + 3] == player &&
-						board[0][checkColumn + 4] == Connect4State.EMPTY){
-					totalEvaluation += HOW_GOOD[3];
+			// if 0 is empty, followed by 2 of my pieces and two more empty, this is a pattern
+			if (board[0][checkColumn] == Connect4State.EMPTY &&
+					board[0][checkColumn + 1] == player && 
+					board[0][checkColumn + 2] == player &&
+					board[0][checkColumn + 3] == Connect4State.EMPTY && 
+					board[0][checkColumn + 4] == Connect4State.EMPTY){
+				totalEvaluation += HOW_GOOD[3];
+			} else if (board[0][checkColumn] == Connect4State.EMPTY &&
+					board[0][checkColumn + 1] == Connect4State.EMPTY &&
+					board[0][checkColumn + 2] == player &&
+					board[0][checkColumn + 3] == player &&
+					board[0][checkColumn + 4] == Connect4State.EMPTY){
+				totalEvaluation += HOW_GOOD[3];
 			}
 		}
-		
+
 
 		// Evaluate unblocked verticals
 		// all potential ver 4-in-row start from at most from row 2

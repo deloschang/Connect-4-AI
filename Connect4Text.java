@@ -8,18 +8,18 @@ import java.util.Scanner;
 
 public class Connect4Text implements Connect4View{
 	private Scanner input; 
-	
+
 	public Connect4Text(){
 		input = new Scanner(System.in);
 	}
-	
+
 	/**  
 	 * Displays the current board
 	 * @param state current state of the game
 	 */
 	public void display(Connect4State state){
 		char [][] board = state.getBoard();
-		
+
 		for (int row = state.ROWS - 1; row > -1; row--){
 			System.out.print(row + " |");
 			for (int column = 0; column < state.COLS; column++){
@@ -28,14 +28,14 @@ public class Connect4Text implements Connect4View{
 			}
 			System.out.println("\n");
 		}
-		
+
 		System.out.print("  ");
 		for (int column = 0; column < state.COLS; column++){
 			System.out.print(" "+column);
 		}
-		
+
 		System.out.println("\n");
-		
+
 	}
 
 	/**
@@ -46,19 +46,19 @@ public class Connect4Text implements Connect4View{
 	 */
 	public int getUserMove(Connect4State state){
 		int column;
-		
+
 		System.out.println();
 		System.out.println("Please pick a column");
-		
+
 		column = input.nextInt();
-		
+
 		// check boundaries
 		while ((column < 0) || (column > state.COLS - 1) || !state.isValidMove(column)){
 			System.out.println("Illegal column. Please try again");
 			System.out.println("Please pick a column");
 			column = input.nextInt();
 		}
-		
+
 		return column;
 	}
 
@@ -80,10 +80,10 @@ public class Connect4Text implements Connect4View{
 	public int getIntAnswer (String question){
 		int answer = 0;
 		boolean valid = false;
-		
+
 		// Ask question
 		System.out.println(question + " ");
-		
+
 		while (!valid){
 			try { 
 				answer = input.nextInt();
@@ -93,9 +93,9 @@ public class Connect4Text implements Connect4View{
 				valid = false;
 			}
 		}
-		
+
 		return answer;
-		
+
 	}
 
 	/**
@@ -113,9 +113,9 @@ public class Connect4Text implements Connect4View{
 	 */
 	public String getAnswer(String question){
 		System.out.println(question + " ");
-		
+
 		return input.nextLine();
-		
+
 	}
-	
+
 }

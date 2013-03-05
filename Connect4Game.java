@@ -139,7 +139,7 @@ public class Connect4Game implements Connect4State{
 
 			// Switch evaluation for player and computer 
 			evalValue = -1 * evalValue;
-			
+
 			// Evaluation steps
 			evalValue = evalValue - evalAdjust(openRow, col); // adjust the evaluation for the move
 			board[openRow][col] = CHECKERS[getPlayerNum()]; // add the checker
@@ -147,7 +147,7 @@ public class Connect4Game implements Connect4State{
 
 			// Increment moves done
 			movesDone++;
-			
+
 			// Update latest row/cols
 			latestRow = openRow;
 			latestCol = col;
@@ -283,13 +283,13 @@ public class Connect4Game implements Connect4State{
 
 		// if there isn't the other player's piece in the way, weight by position strength
 		verticalValue = applyWeights(playerCount, opponentCount, verticalValue);
-		
+
 		// return this sum for the analysis of the verticals
 		return verticalValue;
 	}
 
-	
-	
+
+
 	/**
 	 * Public helper method to apply weights after looking at Connect 4
 	 * possibilities
@@ -306,10 +306,10 @@ public class Connect4Game implements Connect4State{
 		} else if (opponentCount == 0) {
 			sum = sum + ComputerConnect4Player.HOW_GOOD[playerCount];
 		}
-		
+
 		return sum;
 	}
-	
+
 	/**
 	 * Evaluates the possibilities for diagonal and horizontal connect fours
 	 * 
@@ -331,11 +331,11 @@ public class Connect4Game implements Connect4State{
 		int sum = 0;
 		int checkColumn = leftBound;
 		int checkRow = currentRow; 
-		
+
 		// -4 or 4 depending on which type of diagonal
 		// 0 if checking horizontal
 		int diagonalDelta = offsetRow * 4;
-		
+
 		if (boundDiff < 3) {
 			return 0;
 		}
@@ -353,12 +353,12 @@ public class Connect4Game implements Connect4State{
 				playerCount = playerCount + 1;
 			}
 			checkColumn = checkColumn + 1;
-			
+
 		}
 
 		// apply the weights based on the previous connect 4 possibilities
 		sum = applyWeights(playerCount, opponentCount, sum);
-		
+
 		// ++ for row and column for diagonals
 		// ++ for column for horizontals
 		for (checkColumn = checkColumn;
@@ -367,7 +367,7 @@ public class Connect4Game implements Connect4State{
 			if (board[(checkRow - diagonalDelta)][(checkColumn - 4)] == opponent){
 				opponentCount = opponentCount -1;
 			} 
-			
+
 			if (board[(checkRow - diagonalDelta)][(checkColumn - 4)] == mainPlayer) {
 				playerCount = playerCount -1;
 			}
@@ -375,14 +375,14 @@ public class Connect4Game implements Connect4State{
 			if (board[checkRow][checkColumn] == opponent){
 				opponentCount = opponentCount + 1;
 			}
-			
+
 			if (board[checkRow][checkColumn] == mainPlayer) {
 				playerCount = playerCount + 1;
 			}
 
 			// apply the weights 
 			sum = applyWeights(playerCount, opponentCount, sum);
-			
+
 			checkColumn = checkColumn + 1;
 		}
 
