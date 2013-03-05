@@ -1,3 +1,5 @@
+import java.util.Scanner;
+
 /**
  * Connect4.java
  * 
@@ -8,22 +10,34 @@
 
 public class Connect4 {
 	public static void main(String [] args){
-		int COMP_DEPTH = 5; // set the depth
-
-		// Hold the view methods. 
-		Connect4View view = new Connect4ViewGraphical();
-
+		Scanner input = new Scanner(System.in);
+		String answer = "";
+		Connect4View view;
+		
+		// Ask for either text or view 
+		while (!(answer.contains("Text") || answer.contains("Graphic"))){
+			System.out.println("Text or Graphical View?");
+			answer = input.nextLine();
+		}
+		
+		if (answer.contains("Text")){
+			view = new Connect4Text();
+		} else {
+			view = new Connect4ViewGraphical();
+		}
+		
 		Player [] players = new Player[2];
 
 		// Initialize the game
 			// Computer - for computer
-			// Professor - for Prof. Drysdale's AI
+			// Professor - Prof. Drysdale's AI
 		
 		String playerName = view.getAnswer("Enter the name of the first player." +
 		"\n(Include 'Computer' if you want a computer player) ");
 		
 		if (playerName.contains("Computer")){
-			players[0] = new ComputerConnect4Player(playerName, COMP_DEPTH);
+			int askDepth = view.getIntAnswer("Please enter depth of computer");
+			players[0] = new ComputerConnect4Player(playerName, askDepth);
 		} else if (playerName.contains("Professor")){ 
 			players[0] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
@@ -34,7 +48,8 @@ public class Connect4 {
 		"\n(Include 'Computer' if you want a computer player) ");
 		
 		if (playerName.contains("Computer")){
-			players[1] = new ComputerConnect4Player(playerName, COMP_DEPTH);
+			int askDepth = view.getIntAnswer("Please enter depth of computer");
+			players[1] = new ComputerConnect4Player(playerName, askDepth);
 		} else if (playerName.contains("Professor")){ 
 			players[1] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
@@ -47,7 +62,6 @@ public class Connect4 {
 		
 		// Hold current game state
 		while (!state.gameIsOver()){
-			System.out.println("Make a Move");
 			int move = state.getPlayerToMove().getMove(state, view);
 			
 			state.makeMove(move);
@@ -55,7 +69,8 @@ public class Connect4 {
 		}
 		
 		// The game is over
-		
+			// declare the winner!
+		view.reportToUser(state.getPlayers()[1 - state.getPlayerNum()].getName() + " won!");
 		
 		
 	}
