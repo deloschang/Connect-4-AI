@@ -30,7 +30,6 @@ public class Connect4 {
 
 		// Initialize the game
 		// Computer - for computer
-		// Professor - Prof. Drysdale's AI
 
 		String playerName = view.getAnswer("Enter the name of the first player." +
 				"\n(Include 'Computer' if you want a computer player) ");
@@ -38,8 +37,6 @@ public class Connect4 {
 		if (playerName.contains("Computer")){
 			int askDepth = view.getIntAnswer("Please enter depth of computer");
 			players[0] = new ComputerConnect4Player(playerName, askDepth);
-		} else if (playerName.contains("Professor")){ 
-			players[0] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
 			players[0] = new Connect4HumanPlayer(playerName);
 		}
@@ -50,8 +47,6 @@ public class Connect4 {
 		if (playerName.contains("Computer")){
 			int askDepth = view.getIntAnswer("Please enter depth of computer");
 			players[1] = new ComputerConnect4Player(playerName, askDepth);
-		} else if (playerName.contains("Professor")){ 
-			players[1] = new ComputerPlayerABPlus(playerName, 16);
 		} else { 
 			players[1] = new Connect4HumanPlayer(playerName);
 		}

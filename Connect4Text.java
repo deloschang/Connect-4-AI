@@ -1,3 +1,4 @@
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 /**
@@ -45,21 +46,32 @@ public class Connect4Text implements Connect4View{
 	 * @return the number of the move that player chose
 	 */
 	public int getUserMove(Connect4State state){
-		int column;
+		Scanner column;
+		int choose;
 
 		System.out.println();
 		System.out.println("Please pick a column");
 
-		column = input.nextInt();
-
-		// check boundaries
-		while ((column < 0) || (column > state.COLS - 1) || !state.isValidMove(column)){
-			System.out.println("Illegal column. Please try again");
-			System.out.println("Please pick a column");
-			column = input.nextInt();
+		column = new Scanner(System.in);
+		
+		// validity checks
+		for(;;) {
+		    if(!column.hasNextInt() ) { 
+		        System.out.println("Integers from 0 to 6 allowed."); 
+				System.out.println("Please pick a column");
+		        column.next(); // discard
+		        continue;
+		    } 
+		    choose = column.nextInt();
+		    if( (choose < 0) || (choose > state.COLS - 1) ) {
+				System.out.println("Illegal column. Please try again");
+				System.out.println("Please pick a column");
+		        continue;
+		    }
+		    break;
 		}
 
-		return column;
+		return choose;
 	}
 
 	/**

@@ -208,7 +208,6 @@ public class Connect4Game implements Connect4State{
 		char opponent = CHECKERS[(1 - this.playerToMoveNum)];
 		char mainPlayer = CHECKERS[this.playerToMoveNum];
 
-		// give 0 weight to columns 0 and 6
 		leftBound = Math.max(column - 3, 0);
 		rightBound = Math.min(6, column + 3);
 
@@ -528,9 +527,13 @@ public class Connect4Game implements Connect4State{
 			gameOne.makeMove(column);
 
 			int new_eval = gameOne.grabEvalValue();
+			int compEval = ComputerConnect4Player.evaluate(gameTwo);
+			
+			System.out.println("The following evaluation numbers in the game should match.");
+			System.out.println("Player One " + new_eval);
+			System.out.println("Player Two " + compEval);
 			view.display(gameOne);
 
-			int compEval = ComputerConnect4Player.evaluate(gameTwo);
 
 		}
 	}

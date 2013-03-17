@@ -68,12 +68,11 @@ public class ComputerConnect4Player extends Player {
 
 				state.makeMove(column);
 
-				// testing
-				//				view.display(state);
-				//				System.out.println("===============");
-				//				System.out.println("Eval # :" + state.grabEvalValue());
-				//				System.out.println("True Eval # :" + evaluate(state));
-				//				System.out.println("===============");
+//				 testing
+								view.display(state);
+								System.out.println("===============");
+								System.out.println("Position Eval # :" + evaluate(state));
+								System.out.println("===============");
 
 
 				if (state.gameIsOver()){
