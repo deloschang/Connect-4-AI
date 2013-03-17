@@ -10,6 +10,7 @@ How to Play
 1. Add the Connect4.jar to your build path (this loads the JFrame and Graphics)
   a. In Eclipse, on your project folder, go to 'Properties' then 'Add JARs'. 
   b. Select the Connect4.jar
+  ** Alternatively, you can remove the Connect4Graphical and play via Text View in Connect4Text.java 
 
 2. Run the Connect 4 game via Connect4.java
 
