@@ -1,5 +1,11 @@
 Connect 4 AI
 =-=-=-=-=-=-=-=
+* A Connect 4 AI that plays using Game Tree Search, alpha-beta pruning and odd-even search
+
+
+=-=--=-=--=-=-=
+
+How to Play
 
 1. Add the Connect4.jar to your build path (this loads the JFrame and Graphics)
   a. In Eclipse, on your project folder, go to 'Properties' then 'Add JARs'. 
@@ -8,3 +14,5 @@ Connect 4 AI
 2. Run the Connect 4 game via Connect4.java
 
 3. Follow instructions to play against another Human or another Computer!
+
+
